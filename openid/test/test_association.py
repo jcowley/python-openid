@@ -173,7 +173,7 @@ class TestCheckMessageSignature(unittest.TestCase):
             3600, '{sha1}', 'very_secret', "HMAC-SHA1")
         self.failUnlessRaises(ValueError, assoc.checkMessageSignature, m)
         
-    def test_checkMethodSignature(self):
+    def test_checkMessageSignature(self):
         m = Message(OPENID2_NS)
         m.updateArgs(OPENID2_NS, {'mode': 'id_res',
                                   'identifier': '=example',
