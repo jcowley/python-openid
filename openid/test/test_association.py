@@ -172,6 +172,27 @@ class TestCheckMessageSignature(unittest.TestCase):
         assoc = association.Association.fromExpiresIn(
             3600, '{sha1}', 'very_secret', "HMAC-SHA1")
         self.failUnlessRaises(ValueError, assoc.checkMessageSignature, m)
+        
+    def test_checkMethodSignature(self):
+        m = Message(OPENID2_NS)
+        m.updateArgs(OPENID2_NS, {'mode': 'id_res',
+                                  'identifier': '=example',
+                                  })
+        m.updateArgs(BARE_NS, {'xey': 'value'})
+        
+        assoc = association.Association.fromExpiresIn(
+            3600, '{sha1}', 'very_secret', "HMAC-SHA1")
+        
+        # check with valid signature
+        m = assoc.signMessage(m)
+        passed = assoc.checkMessageSignature(m)
+        self.failUnless(passed, "valid signature failed")
+        
+        # check with invalid signature
+        m.updateArgs(OPENID2_NS, {'sig': 'badkey'})
+        passed = assoc.checkMessageSignature(m)
+        self.failUnless(passed == 0, "invalid signature passed")
+        
 
 
 def pyUnitTests():
